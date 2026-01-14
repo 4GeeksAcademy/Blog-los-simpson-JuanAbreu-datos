@@ -1,19 +1,11 @@
 export const initialStore=()=>{
   return{
-    message: null,
-    todos: [
-      {
-        id: 1,
-        title: "Make the bed",
-        background: null,
-      },
-      {
-        id: 2,
-        title: "Do my homework",
-        background: null,
-      }
-    ]
+    
+  
+    characters: [],
+    favorites: []
   }
+
 }
 
 export default function storeReducer(store, action = {}) {
@@ -28,5 +20,28 @@ export default function storeReducer(store, action = {}) {
       };
     default:
       throw Error('Unknown action.');
+
+      case 'set_allcharacters':
+        return {
+          ...store,
+          characters: action.payload
+
+    }
+      
+    case 'add_to_favorites': 
+      const isAlreadyFavorite = store.favorites.some(fav => fav.id === action.payload.id);
+      if (isAlreadyFavorite) {
+        return store; 
+      }
+      return {
+        ...store,
+        favorites: [...store.favorites, action.payload]
+      }
+    
+    case 'remove_from_favorites': 
+      return {
+        ...store,
+        favorites: store.favorites.filter(fav => fav.id !== action.payload.id)
+      }
   }    
 }
