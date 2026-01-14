@@ -1,15 +1,27 @@
 import { useParams, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer";
+import { set_allcharacters } from "../components/APIServices";
 
 export const CharacterDetail = () => {
 	const { theId } = useParams();
 	const { store, dispatch } = useGlobalReducer();
+	const [loading, setLoading] = useState(true);
 	
-	// Buscar el personaje por ID
-	const character = store.characters.find(char => char.id === parseInt(theId));
+	// Cargar personajes si no están
+	useEffect(() => {
+		if (!store.characters || store.characters.length === 0) {
+			set_allcharacters(dispatch).then(() => {
+				setLoading(false);
+			});
+		} else {
+			setLoading(false);
+		}
+	}, [store.characters, dispatch]);
 
+	const character = store.characters?.find(char => char.id === parseInt(theId));
 	const BASE_URL = "https://thesimpsonsapi.com";
-     const URL_IMG = "https://cdn.thesimpsonsapi.com/200"
+	const URL_IMG = "https://cdn.thesimpsonsapi.com/200"
 
 	// Verificar si está en favoritos
 	const isFavorite = store.favorites?.some(fav => fav.id === character?.id);
@@ -28,7 +40,19 @@ export const CharacterDetail = () => {
 		}
 	};
 
-	// Si no encuentra el personaje
+	// Mostrar loading mientras carga
+	if (loading) {
+		return (
+			<div className="container mt-5 text-center">
+				<div className="spinner-border text-primary" role="status">
+					<span className="visually-hidden">Cargando...</span>
+				</div>
+				<p className="mt-3">Cargando personaje...</p>
+			</div>
+		);
+	}
+
+	// Si no encuentra el personaje después de cargar
 	if (!character) {
 		return (
 			<div className="container mt-5">
