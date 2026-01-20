@@ -9,7 +9,7 @@ export const Navbar = () => {
 		<nav className="navbar navbar-warning bg-warning">
 			<div className="container">
 				<Link to="/">
-					<span className="navbar-brand mb-0 h1">Los Simpson</span>
+					<span className="navbar-brand mb-0 h1">The Simpsons App</span>
 				</Link>
 				<div className="ml-auto">
 					<Link to="/favorites">

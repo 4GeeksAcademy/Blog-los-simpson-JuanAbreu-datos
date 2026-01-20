@@ -1,5 +1,4 @@
 export const initialStore = () => {
-  // Cargar favoritos desde localStorage al inicio
   const savedFavorites = localStorage.getItem('favorites');
   
   return {
@@ -17,7 +16,8 @@ export const initialStore = () => {
       }
     ],
     characters: [],
-    favorites: savedFavorites ? JSON.parse(savedFavorites) : [], // ← Carga los favoritos guardados
+    locations: [], // ✅ Nuevo: array de locaciones
+    favorites: savedFavorites ? JSON.parse(savedFavorites) : [],
   }
 }
 
@@ -36,13 +36,19 @@ export default function storeReducer(store, action = {}) {
         characters: action.payload
       }
     
+    // ✅ Nuevo caso para locaciones
+    case 'set_alllocations':
+      return {
+        ...store,
+        locations: action.payload
+      }
+    
     case 'add_to_favorites':
       const isAlreadyFavorite = store.favorites.some(fav => fav.id === action.payload.id);
       if (isAlreadyFavorite) {
         return store;
       }
       const newFavoritesAdd = [...store.favorites, action.payload];
-      // ← Guardar en localStorage
       localStorage.setItem('favorites', JSON.stringify(newFavoritesAdd));
       return {
         ...store,
@@ -51,7 +57,6 @@ export default function storeReducer(store, action = {}) {
     
     case 'remove_from_favorites':
       const newFavoritesRemove = store.favorites.filter(fav => fav.id !== action.payload.id);
-      // ← Guardar en localStorage
       localStorage.setItem('favorites', JSON.stringify(newFavoritesRemove));
       return {
         ...store,
